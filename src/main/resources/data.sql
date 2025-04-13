@@ -49,3 +49,31 @@ INSERT INTO campaign_keywords (campaign_id, keywords) VALUES (2, 'performance');
 INSERT INTO campaign_keywords (campaign_id, keywords) VALUES (3, 'eco');
 INSERT INTO campaign_keywords (campaign_id, keywords) VALUES (3, 'sustainable');
 INSERT INTO campaign_keywords (campaign_id, keywords) VALUES (3, 'green');
+
+-- Keywords
+INSERT INTO keyword (id, name) VALUES (1, 'wireless');
+INSERT INTO keyword (id, name) VALUES (2, 'earbuds');
+INSERT INTO keyword (id, name) VALUES (3, 'smartwatch');
+INSERT INTO keyword (id, name) VALUES (4, 'fitness');
+INSERT INTO keyword (id, name) VALUES (5, 'gaming');
+INSERT INTO keyword (id, name) VALUES (6, 'laptop');
+INSERT INTO keyword (id, name) VALUES (7, 'keyboard');
+INSERT INTO keyword (id, name) VALUES (8, 'mechanical');
+INSERT INTO keyword (id, name) VALUES (9, 'rgb');
+INSERT INTO keyword (id, name) VALUES (10, 'eco');
+INSERT INTO keyword (id, name) VALUES (11, 'sustainable');
+INSERT INTO keyword (id, name) VALUES (12, 'green');
+INSERT INTO keyword (id, name) VALUES (13, 'organic');
+INSERT INTO keyword (id, name) VALUES (14, 'cotton');
+INSERT INTO keyword (id, name) VALUES (15, 'reusable');
+INSERT INTO keyword (id, name) VALUES (16, 'fashion');
+INSERT INTO keyword (id, name) VALUES (17, 'clothing');
+INSERT INTO keyword (id, name) VALUES (18, 'men');
+INSERT INTO keyword (id, name) VALUES (19, 'women');
+INSERT INTO keyword (id, name) VALUES (20, 'technology');
+INSERT INTO keyword (id, name) VALUES (21, 'gadgets');
+INSERT INTO keyword (id, name) VALUES (22, 'portable');
+INSERT INTO keyword (id, name) VALUES (23, 'performance');
+INSERT INTO keyword (id, name) VALUES (24, 'bestseller');
+INSERT INTO keyword (id, name) VALUES (25, 'new');
+
