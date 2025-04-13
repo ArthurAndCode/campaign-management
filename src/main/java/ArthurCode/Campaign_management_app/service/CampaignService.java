@@ -1,115 +1,138 @@
 package ArthurCode.Campaign_management_app.service;
 
-import ArthurCode.Campaign_management_app.dto.CampaignDTO;
+import ArthurCode.Campaign_management_app.dto.request.CampaignRequest;
+import ArthurCode.Campaign_management_app.dto.response.CampaignResponse;
 import ArthurCode.Campaign_management_app.exception.CampaignNotFoundException;
 import ArthurCode.Campaign_management_app.exception.FundsException;
+import ArthurCode.Campaign_management_app.exception.OwnerNotFoundException;
 import ArthurCode.Campaign_management_app.exception.ProductNotFoundException;
+import ArthurCode.Campaign_management_app.mapper.CampaignMapper;
+import ArthurCode.Campaign_management_app.model.Owner;
 import ArthurCode.Campaign_management_app.model.Campaign;
 import ArthurCode.Campaign_management_app.model.Product;
-import ArthurCode.Campaign_management_app.model.AppUser;
+import ArthurCode.Campaign_management_app.repository.OwnerRepository;
 import ArthurCode.Campaign_management_app.repository.CampaignRepository;
 import ArthurCode.Campaign_management_app.repository.ProductRepository;
-import ArthurCode.Campaign_management_app.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 public class CampaignService {
 
     private final CampaignRepository campaignRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
+    private final OwnerRepository ownerRepository;
+    private final CampaignMapper campaignMapper;
 
-    public CampaignService(CampaignRepository campaignRepository, ProductRepository productRepository, UserRepository userRepository) {
+    public CampaignService(CampaignRepository campaignRepository, ProductRepository productRepository, OwnerRepository ownerRepository, CampaignMapper campaignMapper) {
         this.campaignRepository = campaignRepository;
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
+        this.ownerRepository = ownerRepository;
+        this.campaignMapper = campaignMapper;
     }
 
-    public List<Campaign> getAll() {
-        return campaignRepository.findAll();
+    public Page<Campaign> getAll(int page, int size) {
+        return campaignRepository.findAll(PageRequest.of(page, size));
     }
 
-    public Campaign getById(Long id) {
-        return campaignRepository.findById(id)
-                .orElseThrow(() -> new CampaignNotFoundException(id));
+    public Page<CampaignResponse> getByOwnerId(Long ownerId, int page, int size) {
+        Owner owner = getOwnerOrThrow(ownerId);
+        Page<Campaign> campaigns = campaignRepository.findAllByOwner(owner, PageRequest.of(page, size));
+        return campaigns.map(campaignMapper::toResponse);
+    }
+
+    public CampaignResponse getCampaignResponseById(Long id) {
+        return campaignMapper.toResponse(getCampaignById(id));
     }
 
     @Transactional
-    public Campaign create(CampaignDTO dto) {
+    public CampaignResponse create(CampaignRequest dto) {
         Product product = getProductOrThrow(dto.getProductId());
-        AppUser appUser = product.getOwner();
+        Owner owner = product.getOwner();
 
-        validateSufficientFunds(appUser, dto.getCampaignFund());
-        deductFunds(appUser, dto.getCampaignFund());
+        validateSufficientFunds(owner, dto.getCampaignFund());
+        deductFunds(owner, dto.getCampaignFund());
 
         Campaign campaign = buildCampaign(dto, product);
-        return campaignRepository.save(campaign);
+        campaignRepository.save(campaign);
+        return campaignMapper.toResponse(campaign);
     }
 
     @Transactional
-    public Campaign update(Long id, CampaignDTO dto) {
-        Campaign campaign = getById(id);
+    public CampaignResponse update(Long id, CampaignRequest dto) {
+        Campaign campaign = getCampaignById(id);
         Product product = campaign.getProduct();
-        AppUser appUser = product.getOwner();
+        Owner owner = product.getOwner();
 
-        adjustUserFunds(appUser, campaign.getCampaignFund(), dto.getCampaignFund());
+        adjustOwnerFunds(owner, campaign.getCampaignFund(), dto.getCampaignFund());
 
         updateCampaignFields(campaign, dto);
-        return campaignRepository.save(campaign);
+        campaignRepository.save(campaign);
+        return campaignMapper.toResponse(campaign);
     }
 
     @Transactional
     public void delete(Long id) {
-        Campaign campaign = getById(id);
+        Campaign campaign = getCampaignById(id);
         refundUnusedCampaignFund(campaign);
         campaignRepository.deleteById(id);
     }
 
+
     //helper methods
+    private Campaign getCampaignById(Long id) {
+        return campaignRepository.findById(id)
+                .orElseThrow(() -> new CampaignNotFoundException(id));
+    }
+
+    private Owner getOwnerOrThrow(Long ownerId) {
+        return ownerRepository.findById(ownerId)
+                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+    }
 
     private Product getProductOrThrow(Long productId) {
         return productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
     }
 
-    private void validateSufficientFunds(AppUser appUser, BigDecimal amount) {
-        if (appUser.getEmeraldFunds().compareTo(amount) < 0) {
+    private void validateSufficientFunds(Owner owner, BigDecimal amount) {
+        if (owner.getEmeraldFunds().compareTo(amount) < 0) {
             throw new FundsException("Not enough emerald funds");
         }
     }
 
-    private void deductFunds(AppUser appUser, BigDecimal amount) {
-        appUser.setEmeraldFunds(appUser.getEmeraldFunds().subtract(amount));
-        userRepository.save(appUser);
+    private void deductFunds(Owner owner, BigDecimal amount) {
+        owner.setEmeraldFunds(owner.getEmeraldFunds().subtract(amount));
+        ownerRepository.save(owner);
     }
 
-    private void addFunds(AppUser appUser, BigDecimal amount) {
-        appUser.setEmeraldFunds(appUser.getEmeraldFunds().add(amount));
-        userRepository.save(appUser);
+    private void addFunds(Owner owner, BigDecimal amount) {
+        owner.setEmeraldFunds(owner.getEmeraldFunds().add(amount));
+        ownerRepository.save(owner);
     }
 
-    private void adjustUserFunds(AppUser appUser, BigDecimal previous, BigDecimal updated) {
+    private void adjustOwnerFunds(Owner owner, BigDecimal previous, BigDecimal updated) {
         BigDecimal diff = updated.subtract(previous);
         if (diff.compareTo(BigDecimal.ZERO) > 0) {
-            validateSufficientFunds(appUser, diff);
-            deductFunds(appUser, diff);
+            validateSufficientFunds(owner, diff);
+            deductFunds(owner, diff);
         } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            addFunds(appUser, diff.abs());
+            addFunds(owner, diff.abs());
         }
     }
 
-    private Campaign buildCampaign(CampaignDTO dto, Product product) {
+    private Campaign buildCampaign(CampaignRequest dto, Product product) {
         Campaign campaign = new Campaign();
         campaign.setProduct(product);
         updateCampaignFields(campaign, dto);
         return campaign;
     }
 
-    private void updateCampaignFields(Campaign campaign, CampaignDTO dto) {
+    private void updateCampaignFields(Campaign campaign, CampaignRequest dto) {
         campaign.setCampaignName(dto.getCampaignName());
         campaign.setKeywords(dto.getKeywords());
         campaign.setBidAmount(dto.getBidAmount());
@@ -117,12 +140,13 @@ public class CampaignService {
         campaign.setStatus(dto.getStatus());
         campaign.setTown(dto.getTown());
         campaign.setRadius(dto.getRadius());
+        campaign.setOwner(campaign.getProduct().getOwner());
     }
 
     private void refundUnusedCampaignFund(Campaign campaign) {
         Product product = campaign.getProduct();
-        AppUser appUser = product.getOwner();
-        addFunds(appUser, campaign.getCampaignFund());
+        Owner owner = product.getOwner();
+        addFunds(owner, campaign.getCampaignFund());
     }
 }
 

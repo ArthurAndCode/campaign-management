@@ -1,6 +1,5 @@
-package ArthurCode.Campaign_management_app.dto;
+package ArthurCode.Campaign_management_app.dto.request;
 
-import ArthurCode.Campaign_management_app.model.Product;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CampaignDTO {
+public class CampaignRequest {
     @NotBlank
     private String campaignName;
 

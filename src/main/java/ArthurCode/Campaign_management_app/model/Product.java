@@ -20,7 +20,7 @@ public class Product {
     private String name;
 
     @ManyToOne
-    private AppUser owner;
+    private Owner owner;
 
 }
 

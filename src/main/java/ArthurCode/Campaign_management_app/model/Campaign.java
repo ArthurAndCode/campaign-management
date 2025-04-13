@@ -44,6 +44,6 @@ public class Campaign {
     private Integer radius;
 
     @ManyToOne
-    private AppUser owner;
+    private Owner owner;
 
 }
