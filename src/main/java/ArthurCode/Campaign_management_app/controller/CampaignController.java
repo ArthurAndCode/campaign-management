@@ -2,7 +2,6 @@ package ArthurCode.Campaign_management_app.controller;
 
 import ArthurCode.Campaign_management_app.dto.request.CampaignRequest;
 import ArthurCode.Campaign_management_app.dto.response.CampaignResponse;
-import ArthurCode.Campaign_management_app.model.Campaign;
 import ArthurCode.Campaign_management_app.service.CampaignService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -22,12 +21,19 @@ public class CampaignController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Campaign>> getAll(
+    public ResponseEntity<Page<CampaignResponse>> getAllFiltered(
+            @RequestParam(required = false) Long productId,
+            @RequestParam(required = false) Boolean status,
+            @RequestParam(required = false) String town,
+            @RequestParam(required = false) String campaignName,
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<Campaign> campaigns = campaignService.getAll(page, size);
-        return ResponseEntity.ok(campaigns);
+        Page<CampaignResponse> filteredCampaigns = campaignService.filterCampaigns(
+                productId, status, town, campaignName, keyword, page, size
+        );
+        return ResponseEntity.ok(filteredCampaigns);
     }
 
     @GetMapping("/owners/{ownerId}")
@@ -52,7 +58,7 @@ public class CampaignController {
         return ResponseEntity.status(HttpStatus.CREATED).body(campaignResponse);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<CampaignResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody CampaignRequest dto) {
         CampaignResponse updatedCampaignResponse = campaignService.update(id, dto);
         return ResponseEntity.ok(updatedCampaignResponse);

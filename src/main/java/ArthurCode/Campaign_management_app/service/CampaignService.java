@@ -13,6 +13,7 @@ import ArthurCode.Campaign_management_app.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -32,8 +33,18 @@ public class CampaignService {
         this.campaignMapper = campaignMapper;
     }
 
-    public Page<Campaign> getAll(int page, int size) {
-        return campaignRepository.findAll(PageRequest.of(page, size));
+    public Page<CampaignResponse> filterCampaigns(
+            Long productId,
+            Boolean status,
+            String town,
+            String campaignName,
+            String keyword,
+            int page,
+            int size
+    ) {
+        Specification<Campaign> spec = CampaignSpecifications.withFilters(productId, status, town, campaignName, keyword);
+        return campaignRepository.findAll(spec, PageRequest.of(page, size))
+                .map(campaignMapper::toResponse);
     }
 
     public Page<CampaignResponse> getByOwnerId(Long ownerId, int page, int size) {
