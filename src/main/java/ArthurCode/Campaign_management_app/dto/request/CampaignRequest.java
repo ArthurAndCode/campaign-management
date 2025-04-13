@@ -37,4 +37,7 @@ public class CampaignRequest {
     @NotNull
     private Long productId;
 
+    @NotNull
+    private Long ownerId;
+
 }

@@ -59,6 +59,13 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse("Unexpected error", Map.of("exception", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(UnauthorizedAccessException ex) {
+        ErrorResponse response = new ErrorResponse("Unauthorized", Map.of("error", ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
 }
 
 

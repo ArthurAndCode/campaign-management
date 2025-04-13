@@ -2,10 +2,7 @@ package ArthurCode.Campaign_management_app.service;
 
 import ArthurCode.Campaign_management_app.dto.request.CampaignRequest;
 import ArthurCode.Campaign_management_app.dto.response.CampaignResponse;
-import ArthurCode.Campaign_management_app.exception.CampaignNotFoundException;
-import ArthurCode.Campaign_management_app.exception.FundsException;
-import ArthurCode.Campaign_management_app.exception.OwnerNotFoundException;
-import ArthurCode.Campaign_management_app.exception.ProductNotFoundException;
+import ArthurCode.Campaign_management_app.exception.*;
 import ArthurCode.Campaign_management_app.mapper.CampaignMapper;
 import ArthurCode.Campaign_management_app.model.Owner;
 import ArthurCode.Campaign_management_app.model.Campaign;
@@ -50,40 +47,50 @@ public class CampaignService {
     }
 
     @Transactional
-    public CampaignResponse create(CampaignRequest dto) {
-        Product product = getProductOrThrow(dto.getProductId());
+    public CampaignResponse create(CampaignRequest request) {
+        Product product = getProductOrThrow(request.getProductId());
         Owner owner = product.getOwner();
 
-        validateSufficientFunds(owner, dto.getCampaignFund());
-        deductFunds(owner, dto.getCampaignFund());
+        validateOwnership(product.getOwner().getId(), owner.getId());
+        validateSufficientFunds(owner, request.getCampaignFund());
+        deductFunds(owner, request.getCampaignFund());
 
-        Campaign campaign = buildCampaign(dto, product);
+        Campaign campaign = buildCampaign(request, product);
         campaignRepository.save(campaign);
         return campaignMapper.toResponse(campaign);
     }
 
     @Transactional
-    public CampaignResponse update(Long id, CampaignRequest dto) {
+    public CampaignResponse update(Long id, CampaignRequest request) {
         Campaign campaign = getCampaignById(id);
         Product product = campaign.getProduct();
         Owner owner = product.getOwner();
 
-        adjustOwnerFunds(owner, campaign.getCampaignFund(), dto.getCampaignFund());
+        validateOwnership(product.getOwner().getId(), owner.getId());
+        adjustOwnerFunds(owner, campaign.getCampaignFund(), request.getCampaignFund());
 
-        updateCampaignFields(campaign, dto);
+        updateCampaignFields(campaign, request);
         campaignRepository.save(campaign);
         return campaignMapper.toResponse(campaign);
     }
 
     @Transactional
-    public void delete(Long id) {
-        Campaign campaign = getCampaignById(id);
+    public void delete(Long campaignId, Long ownerId) {
+        Campaign campaign = getCampaignById(campaignId);
+        Product product = campaign.getProduct();
+        validateOwnership(product.getOwner().getId(), ownerId);
         refundUnusedCampaignFund(campaign);
-        campaignRepository.deleteById(id);
+        campaignRepository.deleteById(campaignId);
     }
 
 
     //helper methods
+    private static void validateOwnership(Long productOwnerId, Long ownerId) {
+        if (!ownerId.equals(productOwnerId)) {
+            throw new UnauthorizedAccessException("You are not the owner of this product");
+        }
+    }
+
     private Campaign getCampaignById(Long id) {
         return campaignRepository.findById(id)
                 .orElseThrow(() -> new CampaignNotFoundException(id));
