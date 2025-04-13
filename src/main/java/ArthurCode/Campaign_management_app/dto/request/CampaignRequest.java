@@ -10,34 +10,35 @@ import java.util.List;
 @Getter
 @Setter
 public class CampaignRequest {
-    @NotBlank
+
+    @NotBlank(message = "Campaign name must not be blank")
     private String campaignName;
 
-    @NotEmpty
+    @NotEmpty(message = "At least one keyword must be provided")
     private List<String> keywords;
 
-    @NotNull
-    @DecimalMin("0.01")
+    @NotNull(message = "Bid amount must be provided")
+    @DecimalMin(value = "0.01", message = "Bid amount must be at least 0.01")
     private BigDecimal bidAmount;
 
-    @NotNull
-    @DecimalMin("0.01")
+    @NotNull(message = "Campaign fund must be provided")
+    @DecimalMin(value = "0.01", message = "Campaign fund must be at least 0.01")
     private BigDecimal campaignFund;
 
-    @NotNull
+    @NotNull(message = "Campaign status must be specified")
     private Boolean status;
 
-    @NotBlank
+    @NotBlank(message = "Town must not be blank")
     private String town;
 
-    @NotNull
-    @Min(1)
+    @NotNull(message = "Radius must be provided")
+    @Min(value = 1, message = "Radius must be at least 1")
     private Integer radius;
 
-    @NotNull
+    @NotNull(message = "Product ID must be provided")
     private Long productId;
 
-    @NotNull
+    @NotNull(message = "Owner ID must be provided")
     private Long ownerId;
-
 }
+
