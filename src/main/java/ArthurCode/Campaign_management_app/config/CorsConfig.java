@@ -15,7 +15,7 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("http://localhost:5173");
+        config.addAllowedOrigin("https://campaign-management-app-production.up.railway.app");
         config.addAllowedHeader("*");
         config.setAllowedMethods(Arrays.asList("OPTIONS", "GET", "POST", "PATCH", "DELETE"));
         source.registerCorsConfiguration("/**", config);

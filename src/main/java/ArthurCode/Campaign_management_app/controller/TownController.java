@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/towns")
-@CrossOrigin(origins = "http://localhost:5137", allowCredentials = "true")
+@CrossOrigin(origins = "https://campaign-management-app-production.up.railway.app", allowCredentials = "true")
 public class TownController {
 
     private final TownService townService;

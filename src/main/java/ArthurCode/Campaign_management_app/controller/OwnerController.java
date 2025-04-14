@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/owners")
-@CrossOrigin(origins = "http://localhost:5137", allowCredentials = "true")
+@CrossOrigin(origins = "https://campaign-management-app-production.up.railway.app", allowCredentials = "true")
 public class OwnerController {
 
     private final OwnerRepository ownerRepository;
