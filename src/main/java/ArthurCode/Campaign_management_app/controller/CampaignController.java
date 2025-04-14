@@ -1,6 +1,7 @@
 package ArthurCode.Campaign_management_app.controller;
 
-import ArthurCode.Campaign_management_app.dto.request.CampaignRequest;
+import ArthurCode.Campaign_management_app.dto.request.CampaignCreateRequest;
+import ArthurCode.Campaign_management_app.dto.request.CampaignUpdateRequest;
 import ArthurCode.Campaign_management_app.dto.response.CampaignResponse;
 import ArthurCode.Campaign_management_app.service.CampaignService;
 import jakarta.validation.Valid;
@@ -53,14 +54,14 @@ public class CampaignController {
     }
 
     @PostMapping
-    public ResponseEntity<CampaignResponse> createCampaign(@Valid @RequestBody CampaignRequest dto) {
-        CampaignResponse campaignResponse = campaignService.create(dto);
+    public ResponseEntity<CampaignResponse> createCampaign(@Valid @RequestBody CampaignCreateRequest request) {
+        CampaignResponse campaignResponse = campaignService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(campaignResponse);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CampaignResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody CampaignRequest dto) {
-        CampaignResponse updatedCampaignResponse = campaignService.update(id, dto);
+    public ResponseEntity<CampaignResponse> updateCampaign(@PathVariable Long id, @Valid @RequestBody CampaignUpdateRequest request) {
+        CampaignResponse updatedCampaignResponse = campaignService.update(id, request);
         return ResponseEntity.ok(updatedCampaignResponse);
     }
 

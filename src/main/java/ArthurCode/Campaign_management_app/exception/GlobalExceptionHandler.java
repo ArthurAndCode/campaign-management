@@ -1,6 +1,7 @@
 package ArthurCode.Campaign_management_app.exception;
 
 import ArthurCode.Campaign_management_app.dto.response.ErrorResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -64,6 +65,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleUnauthorizedAccess(UnauthorizedAccessException ex) {
         ErrorResponse response = new ErrorResponse("Unauthorized", Map.of("error", ex.getMessage()));
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
+        ErrorResponse response = new ErrorResponse(
+                "Data integrity violation",
+                Map.of("error", "Invalid data was provided.")
+        );
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
 }

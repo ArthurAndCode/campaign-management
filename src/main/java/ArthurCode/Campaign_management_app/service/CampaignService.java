@@ -1,6 +1,8 @@
 package ArthurCode.Campaign_management_app.service;
 
-import ArthurCode.Campaign_management_app.dto.request.CampaignRequest;
+import ArthurCode.Campaign_management_app.dto.request.CampaignCreateRequest;
+import ArthurCode.Campaign_management_app.dto.request.CampaignRequestData;
+import ArthurCode.Campaign_management_app.dto.request.CampaignUpdateRequest;
 import ArthurCode.Campaign_management_app.dto.response.CampaignResponse;
 import ArthurCode.Campaign_management_app.exception.*;
 import ArthurCode.Campaign_management_app.mapper.CampaignMapper;
@@ -58,7 +60,7 @@ public class CampaignService {
     }
 
     @Transactional
-    public CampaignResponse create(CampaignRequest request) {
+    public CampaignResponse create(CampaignCreateRequest request) {
         Product product = getProductOrThrow(request.getProductId());
         Owner owner = product.getOwner();
 
@@ -72,7 +74,7 @@ public class CampaignService {
     }
 
     @Transactional
-    public CampaignResponse update(Long id, CampaignRequest request) {
+    public CampaignResponse update(Long id, CampaignUpdateRequest request) {
         Campaign campaign = getCampaignById(id);
         Product product = campaign.getProduct();
         Owner owner = product.getOwner();
@@ -143,14 +145,14 @@ public class CampaignService {
         }
     }
 
-    private Campaign buildCampaign(CampaignRequest dto, Product product) {
+    private Campaign buildCampaign(CampaignCreateRequest dto, Product product) {
         Campaign campaign = new Campaign();
         campaign.setProduct(product);
         updateCampaignFields(campaign, dto);
         return campaign;
     }
 
-    private void updateCampaignFields(Campaign campaign, CampaignRequest dto) {
+    private void updateCampaignFields(Campaign campaign, CampaignRequestData dto) {
         campaign.setCampaignName(dto.getCampaignName());
         campaign.setKeywords(dto.getKeywords());
         campaign.setBidAmount(dto.getBidAmount());

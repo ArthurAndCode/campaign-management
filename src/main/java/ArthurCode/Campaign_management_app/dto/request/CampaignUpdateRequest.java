@@ -9,8 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class CampaignRequest {
-
+public class CampaignUpdateRequest implements CampaignRequestData {
     @NotBlank(message = "Campaign name must not be blank")
     private String campaignName;
 
@@ -35,10 +34,6 @@ public class CampaignRequest {
     @Min(value = 1, message = "Radius must be at least 1")
     private Integer radius;
 
-    @NotNull(message = "Product ID must be provided")
-    private Long productId;
-
     @NotNull(message = "Owner ID must be provided")
     private Long ownerId;
 }
-
