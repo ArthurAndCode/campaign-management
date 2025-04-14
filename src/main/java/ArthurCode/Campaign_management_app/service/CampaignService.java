@@ -36,6 +36,7 @@ public class CampaignService {
     }
 
     public Page<CampaignResponse> filterCampaigns(
+            Long ownerId,
             Long productId,
             Boolean status,
             String town,
@@ -44,7 +45,7 @@ public class CampaignService {
             int page,
             int size
     ) {
-        Specification<Campaign> spec = CampaignSpecifications.withFilters(productId, status, town, campaignName, keyword);
+        Specification<Campaign> spec = CampaignSpecifications.withFilters(ownerId, productId, status, town, campaignName, keyword);
         return campaignRepository.findAll(spec, PageRequest.of(page, size))
                 .map(campaignMapper::toResponse);
     }

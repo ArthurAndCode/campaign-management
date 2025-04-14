@@ -23,6 +23,7 @@ public class CampaignController {
 
     @GetMapping
     public ResponseEntity<Page<CampaignResponse>> getAllFiltered(
+            @RequestParam(required = true) Long ownerId,
             @RequestParam(required = false) Long productId,
             @RequestParam(required = false) Boolean status,
             @RequestParam(required = false) String town,
@@ -32,7 +33,7 @@ public class CampaignController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<CampaignResponse> filteredCampaigns = campaignService.filterCampaigns(
-                productId, status, town, campaignName, keyword, page, size
+                ownerId, productId, status, town, campaignName, keyword, page, size
         );
         return ResponseEntity.ok(filteredCampaigns);
     }

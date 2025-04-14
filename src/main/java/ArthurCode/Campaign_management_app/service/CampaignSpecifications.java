@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.*;
 public class CampaignSpecifications {
 
     public static Specification<Campaign> withFilters(
+            Long ownerId,
             Long productId,
             Boolean status,
             String town,
@@ -15,6 +16,10 @@ public class CampaignSpecifications {
     ) {
         return (root, query, cb) -> {
             Predicate predicate = cb.conjunction();
+
+            if (ownerId != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("owner").get("id"), ownerId));
+            }
 
             if (productId != null) {
                 predicate = cb.and(predicate, cb.equal(root.get("product").get("id"), productId));
