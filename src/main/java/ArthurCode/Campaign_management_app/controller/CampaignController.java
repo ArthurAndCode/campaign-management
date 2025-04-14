@@ -42,7 +42,7 @@ public class CampaignController {
     public ResponseEntity<Page<CampaignResponse>> getCampaignByOwnerId(
             @PathVariable Long ownerId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "6") int size
     ) {
         Page<CampaignResponse> ownerCampaigns = campaignService.getByOwnerId(ownerId, page, size);
         return ResponseEntity.ok(ownerCampaigns);
