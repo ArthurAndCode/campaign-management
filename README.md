@@ -46,8 +46,7 @@ Key dependencies managed via Maven:
 
 ## API Endpoints
 
-You can download the Postman collection directly:
-[Download Postman Collection](https://raw.githubusercontent.com/ArthurAndCode/campaign-management/main/postman%20collection/campaign-management-app.postman_collection.json)
+You can find the Postman collection [here](https://github.com/ArthurAndCode/campaign-management/blob/main/postman%20collection/campaign-management-app.postman_collection.json).
 
 ### Campaigns `/api/v1/campaigns`
 
