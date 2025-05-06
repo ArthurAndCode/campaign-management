@@ -12,7 +12,7 @@ Sellers can:
 - Select keywords via typeahead (dynamic suggestions) from a predefined list.
 - Campaigns are linked to seller accounts, and their emerald funds are reduced accordingly.
 
-Frontend: [campaign-management-app (React + Vite)](https://github.com/ArthurAndCode/campaign-management-app)
+Frontend: [campaign-management-frontend (React + Vite)](https://github.com/ArthurAndCode/campaign-management-frontend)
   
 ---
 
