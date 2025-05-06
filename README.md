@@ -1,5 +1,9 @@
 # Campaign Management App
 
+**Note:** This repository contains a project developed as part of a coding challenge/assignment.  
+The task was to implement the core functionality within a strict 2-day deadline.
+
+
 **Live Demo:** [https://campaign-management-app-production.up.railway.app](https://campaign-management-app-production.up.railway.app)
 
 A backend REST API built using Spring Boot 3.4.4 and Java 21 that enables product campaign management for sellers.
