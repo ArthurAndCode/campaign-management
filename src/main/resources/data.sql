@@ -18,7 +18,7 @@ INSERT INTO town (name) VALUES
 
 -- Owners
 INSERT INTO owner (first_name, last_name, email, password, phone, emerald_funds) VALUES
-                                                                                     ('Karol', 'Nowakowski', 'karol.nowakowski@futurum.tech', 'password123', '07123456789', 1000.00),
+                                                                                     ('Arthur', 'Testuser', 'test.user@mail.com', 'password123', '07123456789', 1000.00),
                                                                                      ('Bob', 'Johnson', 'bob@example.com', 'securepass', '07234567890', 5000.50),
                                                                                      ('Charlie', 'Brown', 'charlie@example.com', 'charlie2024', '07345678901', 3000.00);
 
